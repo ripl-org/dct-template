@@ -1,0 +1,7 @@
+install.packages("here")
+install.packages("lubridate")
+install.packages("RSQLite")
+install.packages("stringr")
+install.packages("tidyverse")
+install.packages("yaml")
+install.packages("futile.logger")

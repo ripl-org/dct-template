@@ -1,0 +1,56 @@
+# Airflow ETL Pipeline Configuration File
+
+# Note: Please save this file as config.yaml in your airflow home directory (~airflow)
+
+# Paths for ETL process
+paths:
+  dags_dir: "airflow/dags/"
+  logs_dir: "airflow/logs/"
+  reports_dir: "airflow/reports/"
+  src_dir: "airflow/src/"
+  static_dir: "airflow/data/static/"
+  extracted_csv_dir: "airflow/data/raw/files/"
+  json_storage_dir: "airflow/data/processed/json"
+  zipfile_storage_dir: "airflow/data/processed/zipfiles"
+  raw_sqlite_database_files_dir: "airflow/data/raw/database/HazelCrestRawTables.db"
+  derived_sqlite_database_files_dir: "airflow/data/processed/database/HazelCrestDerivedTables.db"
+  extract_scripts_dir: "airflow/scripts/extract/"
+  load_scripts_dir: "airflow/scripts/load/"
+  report_scripts_dir: "airflow/scripts/report/"
+  transform_scripts_dir: "airflow/scripts/transform/"
+  frontend_scripts_dir: "airflow/scripts/frontend/"
+  backup_db_dir: "airflow/data/backup/"
+
+# Database configurations
+databases:
+  raw_tables: "airflow/data/raw/database/HazelCrestRawTables.db"  # SQLite DB for raw tables
+  derived_tables: "airflow/data/processed/database/HazelCrestDerivedTables.db"  # SQLite DB for derived tables
+
+# ecom_vmware configurations (Update with your ecom_vmware details)
+ecom_vmware:
+  username: "<YOUR_ECOM_VMWARE_USERNAME>"  # ecom_vmware username
+  password: "<YOUR_ECOM_VMWARE_PASSWORD>"  # ecom_vmware password
+  hostname: "<YOUR_ECOM_VMWARE_HOSTNAME>"  # ecom_vmware hostname
+  port: "<YOUR_ECOM_VMWARE_PORT>"  # ecom_vmware port
+
+# AWS configurations (Update with your AWS account details)
+aws:
+  prod:
+    aws_account: "<YOUR_AWS_ACCOUNT_NAME>"  # AWS account name
+    bucket_name: "<YOUR_AWS_BUCKET_NAME>"  # AWS bucket name
+    output_bucket_prefix: "<YOUR_AWS_OUTPUT_BUCKET_PREFIX>"  # AWS output bucket prefix
+    iamanywhere:
+      trust_anchor_arn: "<YOUR_AWS_TRUST_ANCHOR_ARN>"  # AWS Trust Anchor ARN
+      profile_arn: "<YOUR_AWS_PROFILE_ARN>"  # AWS Profile ARN
+      role_arn: "<YOUR_AWS_ROLE_ARN>"  # AWS Role ARN
+      certificate: "airflow/secrets/certificate.crt"  # update with name of your certificate
+      private_key: "airflow/secrets/private_key.key"  # update with name of your private key
+      region: "us-east-2"  # AWS region
+
+airflow_defaults:
+  email: ["email@example.com"] # replace with your own email addresses. you can add multiple email addresses. Ensure you seperate by comma
+
+# Please generate your own pii and data salt and place here. Extract sripts use this salt to hash PII
+extract_requirements:
+  pii_salt: "<YOUR_PII_SALT>"
+  data_salt: "<YOUR_DATA_SALT>"

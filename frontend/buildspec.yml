@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  exported-variables:
+    - FRONTEND_BUCKET
+    - FRONTEND_CLOUDFRONT
+    - ENVIRONMENT
+
+phases:
+  install:
+    commands:
+      - n 18.18.2
+
+  build:
+    commands:
+      - echo "Updating .env"
+      - echo "NEXT_PUBLIC_DOMAIN_NAME='${DOMAIN_NAME}'" >> .env
+      - echo "NEXT_PUBLIC_ENVIRONMENT='${ENVIRONMENT}'" >> .env
+      - echo "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID='${GOOGLE_ANALYTICS_ID}'" >> .env
+      - echo "NEXT_PUBLIC_MAP_STYLE_URL='${MAP_STYLE_URL}'" >> .env
+      - echo "Installing dependencies"
+      - npm install
+      - echo "Starting build"
+      - npm run build
+      - echo "Deploying to frontend S3 bucket"
+      - aws s3 rm s3://${FRONTEND_BUCKET}/ --recursive --exclude "data*"
+      - aws s3 sync ./out s3://${FRONTEND_BUCKET}/ --cache-control max-age=8640000 --exclude "*.html" --exclude "data*"
+      - aws s3 sync ./out s3://${FRONTEND_BUCKET}/ --cache-control "no-cache, max-age=0" --include "*.html" --exclude "data*"
+      - if \[ ! -z "${FRONTEND_CLOUDFRONT}" \] ; then echo "Invalidating frontend CloudFront distribution" ; fi
+      - if \[ ! -z "${FRONTEND_CLOUDFRONT}" \] ; then aws cloudfront create-invalidation --distribution-id ${FRONTEND_CLOUDFRONT} --paths "/*" ; fi
+
+cache:
+  paths:
+    - 'node_modules/**/*' # Cache `node_modules` for faster `yarn` or `npm i`
+    - '.next/cache/**/*' # Cache Next.js for faster application rebuilds
